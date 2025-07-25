@@ -1,4 +1,4 @@
-# 🚀 Pathway
+# <img src="./favicon.png" alt="logo" width="55"/>**Pathway**
 
 **Pathway** is an application that empowers students with the tools, resources and community they need to land top internships and master DSA.
 
@@ -6,15 +6,14 @@
 
 ---
 
-## 🖼️ App Preview
+## App Preview
 
 <!-- Add a screenshot of your app UI here -->
 ![App Screenshot](./pathway-homepage.png)  
-*Screenshot of Pathway's main dashboard*
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Internship Hub** – Track internship opportunities, monitor your application progress and stay on top of important deadlines
 - **AI Tutor** – Ask questions, clear doubts, or get DSA help in real-time.
@@ -24,7 +23,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** Typescript, Tailwind CSS  
 - **Backend:** Firebase Auth
@@ -34,7 +33,7 @@
 
 ---
 
-## ✨ Getting Started
+## Getting Started
 
 To run Pathway locally:
 
