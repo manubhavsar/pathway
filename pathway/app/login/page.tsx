@@ -1,11 +1,9 @@
 "use client"
 
 import type React from "react"
-// --- 1. Imports for auth
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation" // <-- Import router
-
+import { useRouter } from "next/navigation" 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -16,18 +14,17 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [error, setError] = useState("") // <-- State for error messages
-  const router = useRouter() // <-- Initialize router
+  const [error, setError] = useState("") 
+  const router = useRouter() 
 
-  // --- 2. THIS IS THE FIXED SUBMIT FUNCTION ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setError("") // Clear previous errors
+    setError("") 
 
     try {
       const response = await fetch(
-        'https://pathway-backend-n6ht.onrender.com/api/auth/login', // Your live backend URL
+        'https://pathway-backend-n6ht.onrender.com/api/auth/login', 
         {
           method: 'POST',
           headers: {
@@ -44,21 +41,22 @@ export default function LoginPage() {
       }
 
       // --- SUCCESS! ---
-      // 1. Save the token to the browser's storage
       localStorage.setItem('token', data.token)
 
-      // 2. Redirect to the dashboard
-      router.push('/dashboard')
+      // --- THIS IS THE FIX ---
+      // We use window.location.href to force a full page reload,
+      // which re-initializes the UserContext.
+      window.location.href = '/dashboard';
 
     } catch (err: any) {
-      setError(err.message) // Show error message to user
+      setError(err.message) 
     } finally {
       setIsLoading(false)
     }
   }
-  // --- END OF FIX ---
 
   return (
+    // ... (rest of your JSX is correct)
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 w-full">
@@ -102,7 +100,7 @@ export default function LoginPage() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* --- 3. Show error message if it exists --- */}
+                {/* --- Show error message --- */}
                 {error && (
                   <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm">
                     {error}

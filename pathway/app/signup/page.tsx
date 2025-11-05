@@ -1,10 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation" // <-- 1. Import router
+import { useRouter } from "next/navigation" 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,9 +21,8 @@ export default function SignupPage() {
     agreeToTerms: false,
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const router = useRouter() // <-- 2. Initialize router
+  const router = useRouter() 
 
-  // --- 3. This handler is for <Input> fields ---
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
@@ -41,13 +39,11 @@ export default function SignupPage() {
     }
   }
   
-  // --- 4. This handler is for the <Checkbox> field ---
   const handleCheckboxChange = (checked: boolean | 'indeterminate') => {
     setFormData((prev) => ({
       ...prev,
-      agreeToTerms: !!checked, // !!checked converts 'indeterminate' to false
+      agreeToTerms: !!checked, 
     }));
-    // Clear error for this field
     if (errors.agreeToTerms) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -72,13 +68,12 @@ export default function SignupPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  // --- 5. This is the updated signup logic ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateForm()) return
 
     setIsLoading(true)
-    setErrors({}) // Clear errors
+    setErrors({}) 
 
     try {
       const response = await fetch(
@@ -103,14 +98,13 @@ export default function SignupPage() {
       }
 
       // --- SUCCESS! ---
-      // 1. Save the new token
       localStorage.setItem('token', data.token)
       
-      // 2. Redirect to dashboard
-      router.push('/dashboard')
+      // --- THIS IS THE FIX ---
+      // We use window.location.href to force a full page reload
+      window.location.href = '/dashboard';
 
     } catch (err: any) {
-      // If backend sends "User already exists", show it
       setErrors({ form: err.message }) 
     } finally {
       setIsLoading(false)
@@ -118,8 +112,9 @@ export default function SignupPage() {
   }
 
   return (
+    // ... (rest of your JSX is correct)
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* ... (Header is unchanged) ... */}
+      {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 w-full">
         <Link href="/" className="flex items-center justify-center">
           <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
@@ -144,7 +139,7 @@ export default function SignupPage() {
 
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
-          {/* ... (Decorative elements are unchanged) ... */}
+          {/* Decorative elements */}
           <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-2xl blur-2xl"></div>
           <div className="absolute bottom-40 right-10 w-40 h-40 bg-gradient-to-br from-purple-400/15 to-pink-400/15 rounded-3xl blur-3xl"></div>
 
@@ -161,7 +156,7 @@ export default function SignupPage() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* --- 6. Show form-wide errors --- */}
+                {/* --- Show form-wide errors --- */}
                 {errors.form && (
                   <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm">
                     {errors.form}
@@ -260,7 +255,6 @@ export default function SignupPage() {
                 {/* Terms Checkbox */}
                 <div className="space-y-2">
                   <div className="flex items-start gap-3">
-                    {/* --- 7. This is the corrected Checkbox --- */}
                     <Checkbox
                       id="agreeToTerms"
                       name="agreeToTerms"
@@ -282,7 +276,7 @@ export default function SignupPage() {
                   {errors.agreeToTerms && <p className="text-xs text-red-500">{errors.agreeToTerms}</p>}
                 </div>
 
-                {/* ... (Rest of the file is unchanged) ... */}
+                {/* Sign Up Button */}
                 <Button
                   type="submit"
                   disabled={isLoading}
@@ -292,6 +286,7 @@ export default function SignupPage() {
                   {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
 
+                {/* Divider */}
                 <div className="relative my-4">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
@@ -301,6 +296,7 @@ export default function SignupPage() {
                   </div>
                 </div>
 
+                {/* Social Sign Up */}
                 <Button
                   type="button"
                   variant="outline"
@@ -310,6 +306,7 @@ export default function SignupPage() {
                 </Button>
               </form>
 
+              {/* Sign In Link */}
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{" "}

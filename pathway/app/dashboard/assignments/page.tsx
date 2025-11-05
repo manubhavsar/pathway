@@ -1,89 +1,93 @@
 "use client"
 
+// --- 1. Import hooks ---
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { useUser } from "@/contexts/UserContext"
+
 import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Search, Filter, Plus, Clock, AlertCircle, CheckCircle } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { format } from "date-fns" // <-- For formatting dates
+
+// --- 2. Define the Assignment type ---
+interface IAssignment {
+  _id: string;
+  title: string;
+  course: string;
+  dueDate: string; // Dates will come as ISO strings
+  status: 'Pending' | 'Submitted' | 'Not Started';
+  priority: 'High' | 'Medium' | 'Low' | 'Critical';
+  description: string;
+}
+type AssignmentStatus = "Pending" | "Submitted" | "Not Started" | string;
 
 export default function AssignmentsPage() {
-  const assignments = [
-    {
-      id: 1,
-      title: "React Component Assignment",
-      course: "React Fundamentals",
-      dueDate: "Dec 15, 2024",
-      status: "Pending",
-      priority: "High",
-      description: "Build a todo app with React hooks",
-    },
-    {
-      id: 2,
-      title: "DSA Problem Set #5",
-      course: "Data Structures & Algorithms",
-      dueDate: "Dec 18, 2024",
-      status: "Submitted",
-      priority: "Medium",
-      description: "Solve 10 problems related to graphs",
-    },
-    {
-      id: 3,
-      title: "JavaScript Quiz",
-      course: "Advanced JavaScript",
-      dueDate: "Dec 20, 2024",
-      status: "Pending",
-      priority: "High",
-      description: "Online quiz covering async/await and promises",
-    },
-    {
-      id: 4,
-      title: "Final Project Proposal",
-      course: "Web Development",
-      dueDate: "Dec 25, 2024",
-      status: "Not Started",
-      priority: "Critical",
-      description: "Submit project proposal and implementation plan",
-    },
-  ]
+  const router = useRouter();
+  const { user, isLoading: isUserLoading } = useUser();
+  
+  // --- 3. Setup state for data ---
+  const [assignments, setAssignments] = useState<IAssignment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const getStatusIcon = (status: string) => {
+  // --- 4. Auth Protection ---
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  // --- 5. Data Fetching Hook ---
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!user) return; // Wait for user to be loaded
+
+    const fetchAssignments = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/assignments', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          cache: 'no-store'
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch assignments');
+        }
+        const data = await response.json();
+        setAssignments(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, [user]); // Re-fetch if user changes
+
+  const getStatusIcon = (status: AssignmentStatus) => {
     if (status === "Submitted") return <CheckCircle className="h-4 w-4 text-green-500" />
     if (status === "Pending") return <Clock className="h-4 w-4 text-orange-500" />
     return <AlertCircle className="h-4 w-4 text-red-500" />
+  }
+  
+  // --- 6. Loading State ---
+  if (isUserLoading || !user) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Assignments</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+        <DashboardHeader breadcrumbLabel="Assignments" />
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -91,10 +95,14 @@ export default function AssignmentsPage() {
               <h1 className="text-3xl font-bold">Assignments</h1>
               <p className="text-muted-foreground mt-1">Track and manage your course assignments</p>
             </div>
-            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              <Plus className="mr-2 h-4 w-4" />
-              New Assignment
-            </Button>
+            
+            {/* --- 7. UPDATED BUTTON --- */}
+            <Link href="/dashboard/assignments/new">
+              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                <Plus className="mr-2 h-4 w-4" />
+                New Assignment
+              </Button>
+            </Link>
           </div>
 
           <div className="flex flex-col gap-3 md:flex-row md:gap-2">
@@ -109,8 +117,17 @@ export default function AssignmentsPage() {
           </div>
 
           <div className="space-y-3">
-            {assignments.map((assignment) => (
-              <Card key={assignment.id} className="hover:shadow-md transition-shadow">
+            {/* --- 8. DYNAMIC LIST --- */}
+            {isLoading && <p>Loading assignments...</p>}
+            {!isLoading && assignments.length === 0 && (
+              <Card className="hover:shadow-md transition-shadow">
+                <CardContent className="pt-6 text-center text-muted-foreground">
+                  You have no assignments. Click "New Assignment" to add one!
+                </CardContent>
+              </Card>
+            )}
+            {!isLoading && assignments.map((assignment) => (
+              <Card key={assignment._id} className="hover:shadow-md transition-shadow">
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
                     <div className="pt-1">{getStatusIcon(assignment.status)}</div>
@@ -139,7 +156,8 @@ export default function AssignmentsPage() {
                       <div className="flex items-center justify-between mt-3 text-sm">
                         <span className="flex items-center gap-1 text-muted-foreground">
                           <Clock className="h-3 w-3" />
-                          Due: {assignment.dueDate}
+                          {/* Format the date */}
+                          Due: {format(new Date(assignment.dueDate), "PPP")}
                         </span>
                         <Badge
                           variant="outline"

@@ -208,7 +208,7 @@ export default function DashboardPage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-3">
                       <Briefcase className="h-5 w-5" />
                       Latest Internships
                     </CardTitle>

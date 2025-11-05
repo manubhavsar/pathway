@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js'; // .js is important
 import internshipRoutes from './routes/internshipRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import assignmentRoutes from './routes/assignmentRoutes.js';
 
 // Load .env variables
 dotenv.config();
@@ -27,6 +28,8 @@ app.use('/api/auth', authRoutes);
 
 // Use the internship routes
 app.use('/api/internships', internshipRoutes);
+
+app.use('/api/assignments', assignmentRoutes);
 
 // --- Start the Server ---
 const PORT = process.env.PORT || 5001;
