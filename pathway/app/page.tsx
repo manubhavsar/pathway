@@ -107,7 +107,8 @@ export default function DashboardPage() {
         />
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {/* Welcome Section (Using your new layout) */}
+          
+          {/* --- 6. WELCOME SECTION (YOUR NEW LAYOUT) --- */}
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="aspect-video rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 p-6 text-white md:col-span-2">
               <div className="flex flex-col justify-between h-full">
@@ -189,7 +190,7 @@ export default function DashboardPage() {
 
           {/* Main Content Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            {/* --- 6. DYNAMIC Internships Section --- */}
+            {/* --- 7. DYNAMIC Internships Section --- */}
             <Card className="lg:col-span-4">
               <CardHeader>
                 <div className="flex items-center justify-between">

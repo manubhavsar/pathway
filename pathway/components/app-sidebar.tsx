@@ -98,7 +98,7 @@ const navMain = [
 const navSecondary = [
   {
     title: "My Courses",
-    url: "/dashboard/courses", // <-- Fixed URL
+    url: "/dashboard/my-courses", // <-- Fixed URL
     icon: BookOpen,
   },
   {
