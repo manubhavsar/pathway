@@ -2,6 +2,7 @@
 
 // --- 1. Import React hooks ---
 import { useState, useEffect } from "react" 
+import { useRouter } from 'next/navigation';
 
 import { AppSidebar } from "../../components/app-sidebar" // Using your provided path
 import {
@@ -52,7 +53,15 @@ export default function DashboardPage() {
   // --- 3. Set up state to hold your data ---
   const [internships, setInternships] = useState<Internship[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      // If no token, redirect to login page
+      router.push('/login');
+    }
+  }, [router]); // Add router to dependency array
   // --- 4. Fetch data from your API when the page loads ---
   useEffect(() => {
     const fetchInternships = async () => {

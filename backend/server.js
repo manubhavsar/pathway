@@ -4,6 +4,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js'; // .js is important
 import internshipRoutes from './routes/internshipRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 // Load .env variables
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Pathway API is running... 🏃‍♂️');
 });
+app.use('/api/auth', authRoutes);
 
 // Use the internship routes
 app.use('/api/internships', internshipRoutes);

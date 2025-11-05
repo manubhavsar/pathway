@@ -43,13 +43,13 @@ export default function HomePage() {
         </nav>
         <div className="ml-6 flex gap-2">
           <Button variant="ghost" size="sm">
-            Sign In
+            <Link href="/login">Sign In</Link>
           </Button>
           <Button
             size="sm"
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
-            Get Started
+            <Link href="/signup">Get Started</Link>
           </Button>
         </div>
       </header>
@@ -68,14 +68,15 @@ export default function HomePage() {
                   <Badge variant="secondary" className="w-fit bg-blue-100 text-blue-700 hover:bg-blue-200 self-start">
                     🎓 Student Success Platform
                   </Badge>
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent"
-                  style={{ textShadow: '4px 4px 8px rgba(128, 90, 213, 0.3)' }}
->
+                  <h1
+                    className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent"
+                    style={{ textShadow: "4px 4px 8px rgba(128, 90, 213, 0.3)" }}
+                  >
                     Your Academic Journey Starts Here
                   </h1>
                   <p className="max-w-[600px] text-gray-700 md:text-xl">
-                    Pathway empowers students with the tools, resources, and community they need to  land top internships and master DSA.
-                    Track progress, connect with peers, and unlock your potential.
+                    Pathway empowers students with the tools, resources, and community they need to land top internships
+                    and master DSA. Track progress, connect with peers, and unlock your potential.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
@@ -112,12 +113,19 @@ export default function HomePage() {
             <div className="absolute top-[56%] right-[3%] w-[85%] h-[75%] transform -translate-y-1/2 rotate-12 translate-x-1/3 hover:rotate-[10deg] transition-transform duration-700 ease-out">
               <div className="relative w-full h-full">
                 <Image
-                  src="hero.png"
+                  src="/hero.png"
                   fill
                   alt="Pathway Student Dashboard"
                   className="object-cover rounded-2xl shadow-2xl border border-gray-200/50"
                   priority
                 />
+
+                {/* Right edge shadow overlay */}
+                <div className="absolute top-0 right-0 h-full w-[15%] bg-gradient-to-l from-black/40 to-transparent rounded-r-2xl z-20"></div>
+
+                {/* Additional overlays for depth */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-purple-500/10 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/20 rounded-2xl"></div>
               </div>
             </div>
 
@@ -141,8 +149,8 @@ export default function HomePage() {
                 </Badge>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Everything You Need to Succeed</h2>
                 <p className="max-w-[900px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  From tracking internships to mastering DSA, Pathway provides comprehensive tools designed
-                  specifically for student success.
+                  From tracking internships to mastering DSA, Pathway provides comprehensive tools designed specifically
+                  for student success.
                 </p>
               </div>
             </div>
@@ -154,7 +162,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>Internship Hub</CardTitle>
                   <CardDescription>
-                    Effortlessly track internship opportunities, monitor your application progress, and stay on top of important deadlines— all in one place.
+                    Effortlessly track internship opportunities, monitor your application progress, and stay on top of
+                    important deadlines— all in one place.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -165,7 +174,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>Progress Tracking</CardTitle>
                   <CardDescription>
-                    Explore DSA resources and visualize your progress with detailed analytics and insights to help you stay on track.
+                    Explore DSA resources and visualize your progress with detailed analytics and insights to help you
+                    stay on track.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -176,7 +186,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>Study Groups</CardTitle>
                   <CardDescription>
-                    Connect with peers, form study groups, and collaborate on projects to enhance your learning experience.
+                    Connect with peers, form study groups, and collaborate on projects to enhance your learning
+                    experience.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -187,7 +198,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>Smart Calendar</CardTitle>
                   <CardDescription>
-                    Sync all your academic events, internship deadlines, and learning sessions in one intelligent calendar system.
+                    Sync all your academic events, internship deadlines, and learning sessions in one intelligent
+                    calendar system.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -198,7 +210,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>AI Tutor</CardTitle>
                   <CardDescription>
-                    Get instant help with DSA concepts and finding internships through our AI-powered tutoring assistant.
+                    Get instant help with DSA concepts and finding internships through our AI-powered tutoring
+                    assistant.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -209,7 +222,8 @@ export default function HomePage() {
                   </div>
                   <CardTitle>Achievements</CardTitle>
                   <CardDescription>
-                    Earn badges and celebrate key milestones as you advance through your academic journey with confidence.
+                    Earn badges and celebrate key milestones as you advance through your academic journey with
+                    confidence.
                   </CardDescription>
                 </CardHeader>
               </Card>
