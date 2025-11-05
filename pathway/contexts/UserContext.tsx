@@ -26,7 +26,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    router.push('/');
+    router.push('/'); // Go to home page on logout
   };
 
   useEffect(() => {
@@ -46,7 +46,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         if (!response.ok) {
           // Token is invalid or expired
-          logout(); // Clear bad token and send to home
+          logout(); // Clear bad token
           return;
         }
 
@@ -54,7 +54,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setUser(userData);
       } catch (error) {
         console.error('Failed to fetch user:', error);
-        logout(); // Error, so log out
       } finally {
         setIsLoading(false);
       }

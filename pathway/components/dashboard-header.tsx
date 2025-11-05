@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -72,7 +73,9 @@ export function DashboardHeader({
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               {/* Updated link to point to dashboard */}
-              <BreadcrumbLink href="/dashboard">Student Portal</BreadcrumbLink>
+              <Link href="/dashboard" passHref legacyBehavior>
+                <BreadcrumbLink>Student Portal</BreadcrumbLink>
+              </Link>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
