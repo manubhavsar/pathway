@@ -57,8 +57,11 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchInternships = async () => {
       try {
-        // This hits your backend!
-        const response = await fetch('http://localhost:5001/api/internships');
+        // --- THIS IS THE CORRECTED LINE ---
+        // It points to your live Render backend and disables caching
+        const response = await fetch('https://pathway-backend.onrender.com/api/internships', { cache: 'no-store' });
+        // ------------------------------------
+
         if (!response.ok) {
           throw new Error('Failed to fetch internships');
         }
