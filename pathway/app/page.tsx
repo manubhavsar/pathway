@@ -30,26 +30,21 @@ export default function HomePage() {
             Pathway
           </span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="flex gap-6 sm:gap-8 items-center flex-1 justify-center mx-8">
           <Link href="#features" className="text-sm font-medium hover:text-blue-600 transition-colors">
             Features
           </Link>
           <Link href="#about" className="text-sm font-medium hover:text-blue-600 transition-colors">
             About
           </Link>
-          <Link href="/dashboard" className="text-sm font-medium hover:text-blue-600 transition-colors">
-            Dashboard
-          </Link>
         </nav>
-        <div className="ml-6 flex gap-2">
-          <Button variant="ghost" size="sm">
-            <Link href="/login">Sign In</Link>
-          </Button>
+        {/* Get Started button on the right */}
+        <div className="flex gap-2">
           <Button
             size="sm"
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
-            <Link href="/signup">Get Started</Link>
+            <Link href="/login">Get Started</Link>
           </Button>
         </div>
       </header>
@@ -80,13 +75,15 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                  >
-                    Start Your Journey
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <Link href="/login">
+                    <Button
+                      size="lg"
+                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                    >
+                      Start Your Journey
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                   <Button variant="outline" size="lg" className="border-blue-300 hover:bg-blue-50 bg-transparent">
                     Watch Demo
                   </Button>
@@ -326,7 +323,7 @@ export default function HomePage() {
           <div className="h-6 w-6 bg-gradient-to-br from-blue-600 to-purple-600 rounded flex items-center justify-center">
             <BookOpen className="h-4 w-4 text-white" />
           </div>
-          <p className="text-xs text-gray-600">© 2024 Pathway. All rights reserved.</p>
+          <p className="text-xs text-gray-600">© 2025 Pathway. All rights reserved.</p>
         </div>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link href="#" className="text-xs hover:underline underline-offset-4 text-gray-600 hover:text-gray-900">
