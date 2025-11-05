@@ -1,9 +1,11 @@
 "use client"
 
 import type React from "react"
-
+// --- 1. Imports for auth
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation" // <-- Import router
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,14 +16,47 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("") // <-- State for error messages
+  const router = useRouter() // <-- Initialize router
 
+  // --- 2. THIS IS THE FIXED SUBMIT FUNCTION ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // TODO: Implement authentication logic
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsLoading(false)
+    setError("") // Clear previous errors
+
+    try {
+      const response = await fetch(
+        'https://pathway-backend-n6ht.onrender.com/api/auth/login', // Your live backend URL
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to login')
+      }
+
+      // --- SUCCESS! ---
+      // 1. Save the token to the browser's storage
+      localStorage.setItem('token', data.token)
+
+      // 2. Redirect to the dashboard
+      router.push('/dashboard')
+
+    } catch (err: any) {
+      setError(err.message) // Show error message to user
+    } finally {
+      setIsLoading(false)
+    }
   }
+  // --- END OF FIX ---
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -67,6 +102,13 @@ export default function LoginPage() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* --- 3. Show error message if it exists --- */}
+                {error && (
+                  <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm">
+                    {error}
+                  </div>
+                )}
+                
                 {/* Email Field */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-gray-700">
@@ -119,7 +161,7 @@ export default function LoginPage() {
                   {isLoading ? "Signing in..." : "Sign In"}
                   {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
-
+                
                 {/* Divider */}
                 <div className="relative my-4">
                   <div className="absolute inset-0 flex items-center">
