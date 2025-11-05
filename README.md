@@ -1,4 +1,4 @@
-# <img src="./icon.png" alt="logo" width="55"/>**Pathway**
+# <img src="./pathway/public/icon.png" alt="logo" width="55"/> **Pathway**
 
 **Pathway** is an application that empowers students with the tools, resources and community they need to land top internships and master DSA.
 
@@ -9,7 +9,10 @@
 ## App Preview
 
 <!-- Add a screenshot of your app UI here -->
-![App Screenshot](./pathway-homepage.png)  
+<img width="1511" height="762" alt="dashboard" src="https://github.com/user-attachments/assets/e9f26e4e-0883-4744-9912-9c8b238d7a16" />
+
+<img width="1512" height="759" alt="ai-tutor" src="https://github.com/user-attachments/assets/8266c0b8-b6f9-4270-9c72-cf90a9970b61" />
+
 
 ---
 
