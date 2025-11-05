@@ -1,5 +1,9 @@
 "use client"
 
+// --- 1. Imports for data fetching and auth ---
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
@@ -25,7 +29,23 @@ import {
   Plus,
 } from "lucide-react"
 
+// --- 2. Interface for your Internship data ---
+interface IInternship {
+  _id: string;
+  title: string;
+  company: string;
+  location: string;
+  type: 'Remote' | 'Hybrid' | 'On-site';
+  duration?: string;
+  rating?: number;
+}
+
 export default function DashboardPage() {
+  // --- 3. State for dynamic data ---
+  const [internships, setInternships] = useState<IInternship[]>([]);
+  const [isLoadingInternships, setIsLoadingInternships] = useState(true);
+  const router = useRouter();
+
   // TODO: Replace with actual logged-in user data
   const userMockData = {
     name: "Alex Johnson",
@@ -33,11 +53,47 @@ export default function DashboardPage() {
     avatar: "/placeholder.svg?height=32&width=32",
   }
 
+  // TODO: This should also be fetched from your backend
   const assignmentsDueThisWeek = [
     { id: 1, title: "React Project Submission", course: "Web Development", dueDate: "Dec 15" },
     { id: 2, title: "Data Structures Quiz", course: "Algorithms", dueDate: "Dec 16" },
     { id: 3, title: "Case Study Report", course: "Business Strategy", dueDate: "Dec 18" },
   ]
+
+  // --- 4. Auth Protection Hook ---
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  // --- 5. Data Fetching Hook for Internships ---
+  useEffect(() => {
+    const fetchInternships = async () => {
+      const token = localStorage.getItem('token'); // Need token for auth, even if just for checking
+      if (!token) return; // Stop if no token
+
+      try {
+        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/internships', { 
+          cache: 'no-store' // Fix caching issue
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch internships');
+        }
+        
+        const data = await response.json();
+        setInternships(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoadingInternships(false);
+      }
+    };
+
+    fetchInternships();
+  }, []); // Empty array means this runs once on page load
 
   return (
     <SidebarProvider>
@@ -51,7 +107,7 @@ export default function DashboardPage() {
         />
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {/* Welcome Section */}
+          {/* Welcome Section (Using your new layout) */}
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="aspect-video rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 p-6 text-white md:col-span-2">
               <div className="flex flex-col justify-between h-full">
@@ -87,7 +143,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* Quick Actions (Static) */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className="hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -133,7 +189,7 @@ export default function DashboardPage() {
 
           {/* Main Content Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            {/* Internships Section */}
+            {/* --- 6. DYNAMIC Internships Section --- */}
             <Card className="lg:col-span-4">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -151,90 +207,51 @@ export default function DashboardPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-start space-x-4 p-3 rounded-lg border">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Building className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">Software Engineering Intern</h4>
-                      <Badge variant="secondary">Remote</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Google • Mountain View, CA</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        Remote
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />3 months
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        4.8
-                      </span>
-                    </div>
-                  </div>
-                  <Button size="sm">Apply</Button>
-                </div>
+                
+                {isLoadingInternships && <p>Loading opportunities...</p>}
 
-                <div className="flex items-start space-x-4 p-3 rounded-lg border">
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <Building className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">Data Science Intern</h4>
-                      <Badge variant="secondary">Hybrid</Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">Microsoft • Seattle, WA</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        Hybrid
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />6 months
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        4.9
-                      </span>
-                    </div>
-                  </div>
-                  <Button size="sm">Apply</Button>
-                </div>
+                {!isLoadingInternships && internships.length === 0 && (
+                  <p>No internships found. Check back later!</p>
+                )}
 
-                <div className="flex items-start space-x-4 p-3 rounded-lg border">
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Building className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold">Frontend Developer Intern</h4>
-                      <Badge variant="secondary">On-site</Badge>
+                {!isLoadingInternships && internships.map((internship) => (
+                  <div key={internship._id} className="flex items-start space-x-4 p-3 rounded-lg border">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Building className="h-6 w-6 text-blue-600" />
                     </div>
-                    <p className="text-sm text-muted-foreground">Meta • Menlo Park, CA</p>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        On-site
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />4 months
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        4.7
-                      </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">{internship.title}</h4>
+                        <Badge variant="secondary">{internship.type}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{internship.company} • {internship.location}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {internship.type}
+                        </span>
+                        {internship.duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {internship.duration}
+                          </span>
+                        )}
+                        {internship.rating && internship.rating > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            {internship.rating}
+                          </span>
+                        )}
+                      </div>
                     </div>
+                    <Button size="sm">Apply</Button>
                   </div>
-                  <Button size="sm">Apply</Button>
-                </div>
+                ))}
+                
               </CardContent>
             </Card>
 
-            {/* DSA Library Section */}
+            {/* DSA Library Section (Static) */}
             <Card className="lg:col-span-3">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -314,7 +331,7 @@ export default function DashboardPage() {
             </Card>
           </div>
 
-          {/* Bottom Section */}
+          {/* Bottom Section (Static) */}
           <div className="grid gap-4 md:grid-cols-2">
             {/* Recent Activity */}
             <Card>

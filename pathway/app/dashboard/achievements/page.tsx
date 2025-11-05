@@ -1,6 +1,6 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar" // I fixed the import path here
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,64 +9,77 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Trophy, Star, Zap, Lock } from "lucide-react"
+import { Search, Filter, Plus, Clock, AlertCircle, CheckCircle } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { useEffect } from "react" // <-- Added for auth
+import { useRouter } from "next/navigation" // <-- Added for auth
 
-export default function AchievementsPage() {
-  const achievements = [
+// --- Define the type for an assignment ---
+type AssignmentStatus = "Pending" | "Submitted" | "Not Started";
+
+export default function AssignmentsPage() {
+  const router = useRouter(); // <-- Added for auth
+
+  // --- This is static data. We'll make this dynamic next. ---
+  const assignments = [
     {
       id: 1,
-      title: "First Steps",
-      description: "Complete your first course module",
-      icon: Star,
-      earned: true,
-      progress: 100,
+      title: "React Component Assignment",
+      course: "React Fundamentals",
+      dueDate: "Dec 15, 2024",
+      status: "Pending",
+      priority: "High",
+      description: "Build a todo app with React hooks",
     },
     {
       id: 2,
-      title: "DSA Master",
-      description: "Solve 100 DSA problems",
-      icon: Trophy,
-      earned: true,
-      progress: 75,
+      title: "DSA Problem Set #5",
+      course: "Data Structures & Algorithms",
+      dueDate: "Dec 18, 2024",
+      status: "Submitted",
+      priority: "Medium",
+      description: "Solve 10 problems related to graphs",
     },
     {
       id: 3,
-      title: "Night Owl",
-      description: "Study after 11 PM",
-      icon: Zap,
-      earned: false,
-      progress: 0,
+      title: "JavaScript Quiz",
+      course: "Advanced JavaScript",
+      dueDate: "Dec 20, 2024",
+      status: "Pending",
+      priority: "High",
+      description: "Online quiz covering async/await and promises",
     },
     {
       id: 4,
-      title: "Speed Runner",
-      description: "Solve 5 problems in one day",
-      icon: Zap,
-      earned: true,
-      progress: 100,
-    },
-    {
-      id: 5,
-      title: "Collaboration Expert",
-      description: "Join 5 study groups",
-      icon: Trophy,
-      earned: false,
-      progress: 40,
-    },
-    {
-      id: 6,
-      title: "Interview Ready",
-      description: "Complete interview prep course",
-      icon: Trophy,
-      earned: false,
-      progress: 25,
+      title: "Final Project Proposal",
+      course: "Web Development",
+      dueDate: "Dec 25, 2024",
+      status: "Not Started",
+      priority: "Critical",
+      description: "Submit project proposal and implementation plan",
     },
   ]
+
+  // --- Auth Protection Hook ---
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  // --- THIS IS THE FIX ---
+  // I added the type 'AssignmentStatus' to the status parameter
+  const getStatusIcon = (status: AssignmentStatus) => {
+    if (status === "Submitted") return <CheckCircle className="h-4 w-4 text-green-500" />
+    if (status === "Pending") return <Clock className="h-4 w-4 text-orange-500" />
+    return <AlertCircle className="h-4 w-4 text-red-500" />
+  }
 
   return (
     <SidebarProvider>
@@ -83,7 +96,7 @@ export default function AchievementsPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Achievements</BreadcrumbPage>
+                  <BreadcrumbPage>Assignments</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -91,75 +104,90 @@ export default function AchievementsPage() {
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div>
-            <h1 className="text-3xl font-bold">Achievements</h1>
-            <p className="text-muted-foreground mt-1">Earn badges as you progress through your journey</p>
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Assignments</h1>
+              <p className="text-muted-foreground mt-1">Track and manage your course assignments</p>
+            </div>
+            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              <Plus className="mr-2 h-4 w-4" />
+              New Assignment
+            </Button>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Your Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-600">24</div>
-                  <p className="text-sm text-muted-foreground">Badges Earned</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-600">6</div>
-                  <p className="text-sm text-muted-foreground">In Progress</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-600">12</div>
-                  <p className="text-sm text-muted-foreground">Locked</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600">75%</div>
-                  <p className="text-sm text-muted-foreground">Completion</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex flex-col gap-3 md:flex-row md:gap-2">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input placeholder="Search assignments..." className="pl-9" />
+            </div>
+            <Button variant="outline">
+              <Filter className="mr-2 h-4 w-4" />
+              Filter
+            </Button>
+          </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {achievements.map((achievement) => {
-              const Icon = achievement.icon
-              return (
-                <Card
-                  key={achievement.id}
-                  className={`hover:shadow-md transition-all ${
-                    achievement.earned ? "border-yellow-200 bg-yellow-50/30" : "opacity-60"
-                  }`}
-                >
-                  <CardContent className="pt-6">
-                    <div className="flex items-start gap-4">
-                      <div
-                        className={`p-3 rounded-lg ${
-                          achievement.earned ? "bg-yellow-200 text-yellow-700" : "bg-gray-200 text-gray-500"
-                        }`}
-                      >
-                        {achievement.earned ? <Icon className="h-6 w-6" /> : <Lock className="h-6 w-6" />}
+          <div className="space-y-3">
+            {assignments.map((assignment) => (
+              <Card key={assignment.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="pt-6">
+                  <div className="flex items-start gap-4">
+                    <div className="pt-1">{getStatusIcon(assignment.status as AssignmentStatus)}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold truncate">{assignment.title}</h3>
+                          <p className="text-sm text-muted-foreground">{assignment.course}</p>
+                          <p className="text-sm text-muted-foreground mt-1">{assignment.description}</p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Badge
+                            variant="secondary"
+                            className={
+                              assignment.priority === "Critical"
+                                ? "bg-red-100 text-red-700"
+                                : assignment.priority === "High"
+                                  ? "bg-orange-100 text-orange-700"
+                                  : "bg-blue-100 text-blue-700"
+                            }
+                          >
+                            {assignment.priority}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold">{achievement.title}</h3>
-                        <p className="text-sm text-muted-foreground">{achievement.description}</p>
-                        {!achievement.earned && achievement.progress > 0 && (
-                          <>
-                            <div className="flex items-center justify-between mt-2 text-xs">
-                              <span>Progress</span>
-                              <span>{achievement.progress}%</span>
-                            </div>
-                            <Progress value={achievement.progress} className="mt-1" />
-                          </>
-                        )}
-                        {achievement.earned && <Badge className="mt-2 bg-yellow-600 text-white">Earned</Badge>}
+                      <div className="flex items-center justify-between mt-3 text-sm">
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          Due: {assignment.dueDate}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={
+                            assignment.status === "Submitted"
+                              ? "bg-green-50 text-green-700 border-green-200"
+                              : assignment.status === "Pending"
+                                ? "bg-orange-50 text-orange-700 border-orange-200"
+                                : "bg-red-50 text-red-700 border-red-200"
+                          }
+                        >
+                          {assignment.status}
+                        </Badge>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
+                  </div>
+
+                  <div className="flex gap-2 mt-4 pt-4 border-t">
+                    <Button variant="outline" className="flex-1 bg-transparent" size="sm">
+                      View Details
+                    </Button>
+                    {assignment.status !== "Submitted" && (
+                      <Button className="flex-1 bg-blue-600 hover:bg-blue-700" size="sm">
+                        Submit
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </SidebarInset>
