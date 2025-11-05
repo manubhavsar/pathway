@@ -1,10 +1,10 @@
-// backend/controllers/authController.js
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 // --- REGISTER A NEW USER ---
 export const registerUser = async (req, res) => {
+  // ... (your existing registerUser function is unchanged)
   const { name, email, password } = req.body;
 
   try {
@@ -52,6 +52,7 @@ export const registerUser = async (req, res) => {
 
 // --- LOGIN A USER ---
 export const loginUser = async (req, res) => {
+  // ... (your existing loginUser function is unchanged)
   const { email, password } = req.body;
 
   try {
@@ -86,5 +87,24 @@ export const loginUser = async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
+  }
+};
+
+// --- NEW FUNCTION TO GET USER DETAILS ---
+// @desc    Get logged in user's data
+// @route   GET /api/auth/me
+// @access  Private
+export const getMe = async (req, res) => {
+  try {
+    // req.user is attached by the authMiddleware
+    // We already fetched the user in the middleware
+    if (!req.user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    // Send back the user data (name, email, id)
+    res.json(req.user);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 };

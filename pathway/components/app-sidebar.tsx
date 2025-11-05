@@ -2,7 +2,8 @@
 
 import type React from "react"
 import Link from "next/link" // <-- 1. Import Link
-import { usePathname } from "next/navigation" // <-- 2. Import usePathname
+import { usePathname } from "next/navigation"
+import Image from "next/image"
 
 import {
   BookOpen,
@@ -10,7 +11,6 @@ import {
   Calendar,
   ChevronUp,
   Code2,
-  GraduationCap,
   Home,
   Briefcase,
   Users,
@@ -121,15 +121,23 @@ const userData = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const pathname = usePathname() // <-- 4. Get the current page's URL
+  const pathname = usePathname() 
+  const user = userData;
 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-4 py-2">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600 text-sidebar-primary-foreground">
-            <GraduationCap className="size-4 text-white" />
+          {/* --- 3. THIS SECTION IS MODIFIED --- */}
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+            <Image 
+              src="/logo.png" // This file must be in /public/logo.png
+              alt="Pathway Logo" 
+              width={24} 
+              height={24} 
+            />
           </div>
+          {/* --- END OF MODIFIED SECTION --- */}
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">Pathway</span>
             <span className="truncate text-xs text-muted-foreground">Student Portal</span>
@@ -137,16 +145,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
+        {/* ... (rest of your sidebar code is unchanged) ... */}
         <SidebarGroup>
           <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
-            {/* --- 5. I wrapped this in a <Link> component --- */}
             {navMain.map((item) => (
               <Link key={item.title} href={item.url} passHref>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    isActive={pathname === item.url} // <-- Make the active link work
+                    isActive={pathname === item.url} 
                   >
                     <item.icon />
                     <span>{item.title}</span>
@@ -165,7 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuButton
                     tooltip={item.title}
                     size="sm"
-                    isActive={pathname === item.url} // <-- Make the active link work
+                    isActive={pathname === item.url} 
                   >
                     <item.icon />
                     <span>{item.title}</span>
@@ -186,12 +194,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={userData.avatar || "/placeholder.svg"} alt={userData.name} />
+                    <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                     <AvatarFallback className="rounded-lg">AJ</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{userData.name}</span>
-                    <span className="truncate text-xs">{userData.email}</span>
+                    <span className="truncate font-semibold">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
                   </div>
                   <ChevronUp className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -205,12 +213,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={userData.avatar || "/placeholder.svg"} alt={userData.name} />
+                      <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                       <AvatarFallback className="rounded-lg">AJ</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">{userData.name}</span>
-                      <span className="truncate text-xs">{userData.email}</span>
+                      <span className="truncate font-semibold">{user.name}</span>
+                      <span className="truncate text-xs">{user.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
