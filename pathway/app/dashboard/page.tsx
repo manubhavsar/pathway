@@ -3,8 +3,8 @@
 // --- 1. Imports for data fetching and auth ---
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link" // <-- Import Link
-import { useUser } from "@/contexts/UserContext" // <-- Import your User hook
+// --- 2. Import the new useUser hook ---
+import { useUser } from "@/contexts/UserContext" 
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { DashboardHeader } from "@/components/dashboard-header"
@@ -31,7 +31,7 @@ import {
   Plus,
 } from "lucide-react"
 
-// --- 2. Interface for your Internship data ---
+// --- 3. Interface for your Internship data ---
 interface IInternship {
   _id: string;
   title: string;
@@ -50,22 +50,22 @@ interface IAssignment {
 }
 
 export default function DashboardPage() {
-  // --- 3. State for dynamic data ---
+  // --- 4. State for dynamic data ---
   const [internships, setInternships] = useState<IInternship[]>([]);
   const [isLoadingInternships, setIsLoadingInternships] = useState(true);
   const router = useRouter();
   
-  // --- 4. Get REAL user data from the context ---
+  // --- 5. Get REAL user data from the context ---
   const { user, isLoading: isUserLoading } = useUser();
 
-  // TODO: This should also be fetched from your backend
+  // TODO: This should be fetched from your backend
   const assignmentsDueThisWeek = [
     { id: 1, title: "React Project Submission", course: "Web Development", dueDate: "Dec 15" },
     { id: 2, title: "Data Structures Quiz", course: "Algorithms", dueDate: "Dec 16" },
     { id: 3, title: "Case Study Report", course: "Business Strategy", dueDate: "Dec 18" },
   ]
 
-  // --- 5. Auth Protection Hook ---
+  // --- 6. Auth Protection Hook ---
   useEffect(() => {
     // We wait for the user context to be loaded
     if (!isUserLoading && !user) {
@@ -73,15 +73,14 @@ export default function DashboardPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // --- 6. Data Fetching Hook for Internships ---
+  // --- 7. Data Fetching Hook for Internships ---
   useEffect(() => {
-    const token = localStorage.getItem('token'); 
-    if (!token || !user) return; // Stop if no token or user
+    const token = localStorage.getItem('token');
+    if (!token) return; // Stop if no token (auth hook will redirect)
 
-    const fetchLatestInternships = async () => {
+    const fetchInternships = async () => {
       try {
-        // --- THIS IS THE UPDATED FETCH URL FOR TOP 3 ---
-        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/internships/latest', { 
+        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/internships', { 
           cache: 'no-store' // Fix caching issue
         });
         
@@ -98,13 +97,14 @@ export default function DashboardPage() {
       }
     };
 
-    fetchLatestInternships();
-  }, [user]); // Re-fetch when user is loaded
+    fetchInternships();
+  }, []); // Empty array means this runs once on page load
 
-  // --- 7. Show a loading screen while user is fetched ---
+  // --- 8. Show a loading screen while user is fetched ---
   if (isUserLoading || !user) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <div className="flex h- avscreen items-center justify-center">
+        {/* You can make this a nicer spinner component */}
         Loading Pathway...
       </div>
     );
@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           
-          {/* --- 8. WELCOME SECTION (YOUR NEW LAYOUT + LIVE DATA) --- */}
+          {/* --- 9. WELCOME SECTION (YOUR NEW LAYOUT + LIVE DATA) --- */}
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="aspect-video rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 p-6 text-white md:col-span-2">
               <div className="flex flex-col justify-between h-full">
@@ -164,9 +164,8 @@ export default function DashboardPage() {
                 <Briefcase className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                {/* This number is now dynamic */}
-                <div className="text-2xl font-bold">{internships.length}</div>
-                <p className="text-xs text-muted-foreground">Latest opportunities</p>
+                <div className="text-2xl font-bold">12</div>
+                <p className="text-xs text-muted-foreground">New opportunities</p>
               </CardContent>
             </Card>
             <Card className="hover:shadow-md transition-shadow cursor-pointer">
@@ -203,7 +202,7 @@ export default function DashboardPage() {
 
           {/* Main Content Grid */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            {/* --- 9. DYNAMIC Internships Section --- */}
+            {/* --- 10. DYNAMIC Internships Section --- */}
             <Card className="lg:col-span-4">
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -212,17 +211,12 @@ export default function DashboardPage() {
                       <Briefcase className="h-5 w-5" />
                       Latest Internships
                     </CardTitle>
-                    <CardDescription>Your top 3 newest opportunities</CardDescription>
+                    <CardDescription>Discover new opportunities that match your skills</CardDescription>
                   </div>
-                  {/* --- THIS IS THE UPDATED BUTTON --- */}
-                  <Link href="/dashboard/internships" passHref legacyBehavior>
-                    <Button asChild variant="outline" size="sm">
-                      <a>
-                        View All
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </a>
-                    </Button>
-                  </Link>
+                  <Button variant="outline" size="sm">
+                    View All
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -233,7 +227,6 @@ export default function DashboardPage() {
                   <p>No internships found. Check back later!</p>
                 )}
 
-                {/* This will now only show the top 3 */}
                 {!isLoadingInternships && internships && internships.map((internship) => (
                   <div key={internship._id} className="flex items-start space-x-4 p-3 rounded-lg border">
                     <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">

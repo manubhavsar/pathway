@@ -25,8 +25,15 @@ export default function HomePage() {
       {/* Header */}
       <header className="px-4 lg:px-6 h-16 flex items-center justify-between border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50 w-full">
         <Link href="/" className="flex items-center justify-center">
-          <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <BookOpen className="h-5 w-5 text-white" />
+          <div className="h-8 w-8 rounded-lg flex items-center justify-center">
+            {/* --- Using your icon.png --- */}
+            <Image
+              src="/icon.png" // Assumes icon.png is in public/
+              alt="Pathway Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
           </div>
           <span className="ml-2 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Pathway
