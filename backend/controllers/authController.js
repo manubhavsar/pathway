@@ -57,7 +57,9 @@ export const loginUser = async (req, res) => {
 
   try {
     // 1. Check if user exists
-    let user = await User.findOne({ email });
+    // --- THIS IS THE FIX ---
+    // We must explicitly .select('+password') or Mongoose will not return it
+    let user = await User.findOne({ email }).select('+password');
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
