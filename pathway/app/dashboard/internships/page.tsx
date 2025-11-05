@@ -1,177 +1,163 @@
-
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+// --- 1. Imports for data fetching and auth ---
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useUser } from "@/contexts/UserContext"
+
+import { AppSidebar } from "@/components/app-sidebar" // <-- Fixed import path
+import { DashboardHeader } from "@/components/dashboard-header" // <-- Import header
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Briefcase, MapPin, Clock, Star, Search, Filter, Plus, DollarSign, Users } from "lucide-react"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import {
+  Briefcase,
+  Clock,
+  Star,
+  MapPin,
+  Building,
+  Plus,
+  Search
+} from "lucide-react"
 import { Input } from "@/components/ui/input"
 
+// --- 2. Interface for your Internship data ---
+interface IInternship {
+  _id: string;
+  title: string;
+  company: string;
+  location: string;
+  type: 'Remote' | 'Hybrid' | 'On-site';
+  duration?: string;
+  rating?: number;
+}
+
 export default function InternshipsPage() {
-  const internships = [
-    {
-      id: 1,
-      title: "Software Engineering Intern",
-      company: "Google",
-      location: "Mountain View, CA",
-      type: "Remote",
-      duration: "3 months",
-      rating: 4.8,
-      salary: "$25/hr",
-      applicants: 1250,
-      status: "Open",
-    },
-    {
-      id: 2,
-      title: "Data Science Intern",
-      company: "Microsoft",
-      location: "Seattle, WA",
-      type: "Hybrid",
-      duration: "6 months",
-      rating: 4.9,
-      salary: "$28/hr",
-      applicants: 890,
-      status: "Open",
-    },
-    {
-      id: 3,
-      title: "Frontend Developer Intern",
-      company: "Meta",
-      location: "Menlo Park, CA",
-      type: "On-site",
-      duration: "4 months",
-      rating: 4.7,
-      salary: "$26/hr",
-      applicants: 2100,
-      status: "Open",
-    },
-    {
-      id: 4,
-      title: "Backend Engineer Intern",
-      company: "Amazon",
-      location: "Seattle, WA",
-      type: "Remote",
-      duration: "3 months",
-      rating: 4.6,
-      salary: "$27/hr",
-      applicants: 560,
-      status: "Applied",
-    },
-  ]
+  const [internships, setInternships] = useState<IInternship[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const { user, isLoading: isUserLoading } = useUser();
+
+  // --- 3. Auth Protection Hook ---
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  // --- 4. Data Fetching Hook (Gets ALL internships) ---
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!user) return; // Wait for user to be loaded
+
+    const fetchAllInternships = async () => {
+      try {
+        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/internships', { 
+          cache: 'no-store'
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch internships');
+        }
+        
+        const data = await response.json();
+        setInternships(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAllInternships();
+  }, [user]); // Re-fetch if user changes
+
+  // --- 5. Loading State ---
+  if (isUserLoading || isLoading) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <DashboardHeader breadcrumbLabel="Internships" />
+          <div className="flex-1 p-4">Loading all internships...</div>
+        </SidebarInset>
+      </SidebarProvider>
+    )
+  }
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Internships</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+        <DashboardHeader breadcrumbLabel="Internships" />
 
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          
+          {/* --- 6. Header and Search --- */}
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Internships</h1>
-              <p className="text-muted-foreground mt-1">Discover and apply to internship opportunities</p>
+              <h1 className="text-3xl font-bold">All Internships</h1>
+              <p className="text-muted-foreground mt-1">Search and apply for opportunities</p>
             </div>
             <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
               <Plus className="mr-2 h-4 w-4" />
-              Post Internship
+              Add Internship
             </Button>
           </div>
-
-          <div className="flex flex-col gap-3 md:flex-row md:gap-2">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search internships..." className="pl-9" />
-            </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
+          
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input placeholder="Search by title, company, or location..." className="pl-9" />
           </div>
 
-          <div className="grid gap-4">
-            {internships.map((internship) => (
-              <Card key={internship.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="flex items-center gap-2">
-                        <Briefcase className="h-5 w-5 text-blue-600" />
-                        {internship.title}
-                      </CardTitle>
-                      <CardDescription className="mt-1">{internship.company}</CardDescription>
+          {/* --- 7. DYNAMIC Internships List --- */}
+          <Card>
+            <CardHeader>
+              <CardTitle>All Opportunities ({internships.length})</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              
+              {!internships || internships.length === 0 ? (
+                <p>No internships found. Check back later!</p>
+              ) : (
+                internships.map((internship) => (
+                  <div key={internship._id} className="flex flex-col md:flex-row items-start space-x-0 md:space-x-4 p-3 rounded-lg border">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mb-2 md:mb-0">
+                      <Building className="h-6 w-6 text-blue-600" />
                     </div>
-                    <Badge
-                      variant={internship.status === "Applied" ? "secondary" : "default"}
-                      className={internship.status === "Applied" ? "bg-green-100 text-green-700" : ""}
-                    >
-                      {internship.status}
-                    </Badge>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+                        <h4 className="font-semibold">{internship.title}</h4>
+                        <Badge variant="secondary" className="mt-1 md:mt-0">{internship.type}</Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{internship.company} • {internship.location}</p>
+                      <div className="flex items-center flex-wrap gap-4 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {internship.type}
+                        </span>
+                        {internship.duration && (
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {internship.duration}
+                          </span>
+                        )}
+                        {internship.rating && internship.rating > 0 && (
+                          <span className="flex items-center gap-1">
+                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            {internship.rating}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <Button size="sm" className="w-full md:w-auto mt-3 md:mt-0">Apply</Button>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span>{internship.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{internship.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-muted-foreground" />
-                      <span>{internship.salary}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span>{internship.rating}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Users className="h-4 w-4" />
-                    <span>{internship.applicants} applicants</span>
-                  </div>
-
-                  <div className="flex gap-2 pt-2">
-                    <Button variant="outline" className="flex-1 bg-transparent" size="sm">
-                      View Details
-                    </Button>
-                    <Button className="flex-1 bg-blue-600 hover:bg-blue-700" size="sm">
-                      Apply Now
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                ))
+              )}
+              
+            </CardContent>
+          </Card>
         </div>
       </SidebarInset>
     </SidebarProvider>
