@@ -59,7 +59,7 @@ export default function DashboardPage() {
       try {
         // --- THIS IS THE CORRECTED LINE ---
         // It points to your live Render backend and disables caching
-        const response = await fetch('https://pathway-backend.onrender.com/api/internships', { cache: 'no-store' });
+        const response = await fetch('https://pathway-backend-n6ht.onrender.com/api/internships', { cache: 'no-store' });
         // ------------------------------------
 
         if (!response.ok) {
