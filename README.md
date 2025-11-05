@@ -38,9 +38,9 @@
 
 ## Tech Stack
 
-- **Frontend:** Typescript, Tailwind CSS  
-- **Backend:** Firebase Auth
-- **Database:** Firestore  
+- **Frontend:** Next.js, Typescript, Tailwind CSS  
+- **Backend:** Express.js
+- **Database:** MongoDB 
 - **Hosting:** Vercel
 - **Extras:** GitHub, Figma
 
